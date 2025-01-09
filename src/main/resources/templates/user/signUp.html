@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html
+        lang="ko"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/defaultLayout}">
+
+  <th:block layout:fragment="content">
+    <section class="contents d-flex justify-content-center">
+      <div class="w-50 sign-up-box">
+        <h2 class="my-4">회원가입</h2>
+        <form type="post" action="/user/sign-up">
+          <table class="table">
+            <tr>
+              <th>* 아이디(4자 이상)</th>
+              <td>
+                <div class="d-flex">
+                  <input class="form-control input-box" id="loginId" name="loginId" placeholder="아이디를 입력하세요.">
+                  <button type="button" class="btn btn-success duplicateBtn" id="loginIdCheckBtn">중복확인</button>
+                </div>
+                <!-- 아이디 체크 결과 -->
+                <!-- d-none 클래스: display none (보이지 않게) -->
+                <div id="idCheckLength" class="small text-danger d-none">ID를 4자 이상 입력해주세요.</div>
+                <div id="idCheckDuplicated" class="small text-danger d-none">이미 사용중인 ID입니다.</div>
+                <div id="idCheckOk" class="small text-success d-none">사용 가능한 ID 입니다.</div>
+              </td>
+            </tr>
+            <tr>
+              <th>* 비밀번호</th>
+              <td><input class="form-control input-box" name="password" placeholder="암호를 입력하세요."></td>
+            </tr>
+            <tr>
+              <th>* 비밀번호 확인</th>
+              <td><input class="form-control input-box" name="password" placeholder="암호를 입력하세요."></td>
+            </tr>
+            <tr>
+              <th>* 이름</th>
+              <td><input class="form-control input-box" name="name" placeholder="이름을 입력하세요."></td>
+            </tr>
+            <tr>
+              <th>* 이메일</th>
+              <td><input class="form-control input-box" name="email" placeholder="이메일을 입력하세요."></td>
+            </tr>
+          </table>
+          <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary w-25 text-white" name="signUp">회원가입</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <script>
+      $(function() {
+        // 중복확인
+        $("#loginIdCheckBtn").on("click", function() {
+          // 문구 초기화
+          $("#idCheckLength").addClass("d-none");
+          $("#idCheckDuplicated").addClass("d-none");
+          $("#idCheckOk").addClass("d-none");
+
+          // alert("중복확인");
+
+          let loginId = $("input[name=loginId]").val().trim();
+          console.log(loginId);
+
+          if (loginId.length < 4) {
+            $("#idCheckLength").removeClass("d-none");
+            return;
+          }
+
+          $.ajax({
+            // request
+            // type 생략시 get 요청
+            url:"/user/is-duplicate-id"
+            , data:{"loginId":"loginId"}
+
+            // response
+            , success:function(data) {
+              if (data.code == 200) {
+                if (data.is_duplicate_id) { // 중복
+                  $("#idCheckDuplicated").removeClass("d-none");
+                } else {
+                  $("#idCheckOk").removeClass("d-none");
+                }
+              } else {
+                alert(data.error_message);
+              }
+            }
+            , error:function(e) {
+              alert("중복확인에 실패했습니다.");
+            }
+          });
+        });
+      });
+    </script>
+  </th:block>
+</html>

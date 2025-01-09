@@ -1,0 +1,32 @@
+header {
+    height:100px;
+}
+
+.contents {
+    min-height:500px;
+}
+
+.btn {
+    border:solid 1px;
+    border-radius: 1;
+    border-color: black;
+    font-size: 20px;
+}
+
+footer {
+    height:100px;
+}
+
+.table {
+    font-size: 14px;
+}
+
+.duplicateBtn {
+    font-size:14px;
+    border:none;
+    white-space: nowrap;
+}
+
+.input-box {
+    font-size:14px;
+}
