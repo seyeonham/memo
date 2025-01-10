@@ -9,13 +9,13 @@
     <section class="contents d-flex justify-content-center">
       <div class="w-50 sign-up-box">
         <h2 class="my-4">회원가입</h2>
-        <form type="post" action="/user/sign-up">
+        <form id="signUpForm" method="post" action="/user/sign-up">
           <table class="table">
             <tr>
               <th>* 아이디(4자 이상)</th>
               <td>
                 <div class="d-flex">
-                  <input class="form-control input-box" id="loginId" name="loginId" placeholder="아이디를 입력하세요.">
+                  <input type="text" class="form-control input-box" id="loginId" name="loginId" placeholder="아이디를 입력하세요.">
                   <button type="button" class="btn btn-success duplicateBtn" id="loginIdCheckBtn">중복확인</button>
                 </div>
                 <!-- 아이디 체크 결과 -->
@@ -27,23 +27,23 @@
             </tr>
             <tr>
               <th>* 비밀번호</th>
-              <td><input class="form-control input-box" name="password" placeholder="암호를 입력하세요."></td>
+              <td><input type="password" class="form-control input-box" id="password" name="password" placeholder="암호를 입력하세요."></td>
             </tr>
             <tr>
               <th>* 비밀번호 확인</th>
-              <td><input class="form-control input-box" name="password" placeholder="암호를 입력하세요."></td>
+              <td><input type="password" class="form-control input-box" id="checkPassword" placeholder="암호를 입력하세요."></td>
             </tr>
             <tr>
               <th>* 이름</th>
-              <td><input class="form-control input-box" name="name" placeholder="이름을 입력하세요."></td>
+              <td><input type="text" class="form-control input-box" id="name" name="name" placeholder="이름을 입력하세요."></td>
             </tr>
             <tr>
               <th>* 이메일</th>
-              <td><input class="form-control input-box" name="email" placeholder="이메일을 입력하세요."></td>
+              <td><input type="text" class="form-control input-box" id="email" name="email" placeholder="이메일을 입력하세요."></td>
             </tr>
           </table>
           <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary w-25 text-white" name="signUp">회원가입</button>
+            <button type="submit" id="signUpBtn" class="btn btn-primary w-25 text-white" name="signUp">회원가입</button>
           </div>
         </form>
       </div>
@@ -72,7 +72,7 @@
             // request
             // type 생략시 get 요청
             url:"/user/is-duplicate-id"
-            , data:{"loginId":"loginId"}
+            , data:{"loginId":loginId}
 
             // response
             , success:function(data) {
@@ -88,6 +88,71 @@
             }
             , error:function(e) {
               alert("중복확인에 실패했습니다.");
+            }
+          });
+        });
+
+        // 회원가입
+        $("#signUpForm").on("submit", function(e) {
+          e.preventDefault(); // 서브밋 중단(화면 이동 X)
+
+          // validation
+          let loginId = $("#loginId").val().trim();
+          let password = $("#password").val();
+          let checkPassword = $("#checkPassword").val();
+          let name = $("#name").val().trim();
+          let email = $("#email").val().trim();
+
+          if (!loginId) {
+            alert("아이디를 입력하세요.");
+            return false; // submit일때는 false를 리턴한다.
+          }
+
+          // idCheckOk 문구가 노출되고 있지 않으면 alert => d-none 있는 상황
+          if ($("#idCheckOk").hasClass("d-none")) {
+            alert("아이디 중복확인을 해주세요.");
+            return false;
+          }
+
+          if (!password || !checkPassword) {
+            alert("비밀번호를 입력하세요.");
+            return false;
+          }
+
+          if (password != checkPassword) {
+            alert("비밀번호가 일치하지 않습니다.");
+            return false;
+          }
+
+          if (!name) {
+            alert("이름을 입력하세요.");
+            return false;
+          }
+
+          if (!email) {
+            alert("이메일을 입력하세요.");
+            return false;
+          }
+
+          // alert("회원가입");
+
+          // 1) form으로 전송 => 다음 화면으로 이동
+          // $(this)[0].submit();
+
+          // 2) AJAX => 응답이 json
+          let url = $(this).attr("action");
+          console.log(url);
+
+          let params = $(this).serialize(); // 직렬화, form 태그의 name 속성을 request 파라미터로 구성
+          console.log(params);
+
+          $.post(url, params) // request
+          .done(function(data) { // response callback 함수
+            if (data.code == 200) { // 성공
+              alert("가입을 환영합니다. 로그인을 해주세요.");
+              location.href = "/user/sign-in-view"; // 로그인 화면
+            } else {
+              alert(data.error_message);
             }
           });
         });
