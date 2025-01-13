@@ -7,12 +7,52 @@
     <section class="contents d-flex justify-content-center">
         <div class="w-25 sign-in-box">
             <h2 class="my-5">로그인</h2>
-            <form method="post" action="/user/sign-in">
-                <input type="text" class="form-control" name="loginId" placeholder="아이디를 입력하세요.">
-                <input type="password" class="form-control mt-1" name="password" placeholder="암호를 입력하세요.">
+            <form id="loginForm" method="post" action="/user/sign-in">
+                <input type="text" class="form-control" name="loginId" id="loginId" placeholder="아이디를 입력하세요.">
+                <input type="password" class="form-control mt-1" name="password" id="password" placeholder="암호를 입력하세요.">
                 <button type="submit" id="signInBtn" class="btn btn-warning form-control text-white mt-3" name="signIn">로그인</button>
                 <a href="/user/sign-up-view" class="btn btn-primary form-control text-white mt-1">회원가입</a>
             </form>
         </div>
     </section>
+
+    <script>
+        $(function() {
+            // 로그인 버튼
+            $("#loginForm").on("submit", function(e) {
+                e.preventDefault();
+                // alert("hrmdls");
+
+                // validation
+                let loginId = $("#loginId").val().trim();
+                let password = $("#password").val();
+
+                if (!loginId) {
+                    alert("아이디를 입력하세요.");
+                    return false;
+                }
+
+                if (!password) {
+                    alert("비밀번호를 입력하세요.");
+                    return false;
+                }
+
+                let url = $(this).attr("action");
+                console.log(url);
+
+                let params = $(this).serialize();
+                console.log(params);
+
+                // ajax
+                $.post(url, params) // requset
+                .done(function(data) { // response - callback
+                    if (data.result == "성공") {
+                        location.href = "/post/list-view";
+                    } else {
+                        alert(data.error_message);
+                    }
+                });
+            });
+        });
+    </script>
 </th:block>
