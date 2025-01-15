@@ -22,15 +22,18 @@
             `post`
         WHERE
             `userId` = #{userId}
+        ORDER BY `id` DESC
     </select>
 
-    <insert id="" parameterType="com.memo.post.domain.Post">
+    <insert id="insertPost" parameterType="map">
         INSERT INTO `post`
         (
             `userId`
             , `subject`
             , `content`
             , `imagePath`
+            , `createdAt`
+            , `updatedAt`
         )
         VALUES
         (
@@ -38,6 +41,8 @@
             , #{subject}
             , #{content}
             , #{imagePath}
+            , NOW()
+            , NOW()
         )
     </insert>
 </mapper>

@@ -1,9 +1,11 @@
 package com.memo.post.bo;
 
+import com.memo.common.FileManagerService;
 import com.memo.post.domain.Post;
 import com.memo.post.mapper.PostMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,6 +14,7 @@ import java.util.List;
 public class PostBO {
 
     private final PostMapper postMapper;
+    private final FileManagerService fileManager;
 
     // 생성자 주입
 //    public PostBO(PostMapper postMapper) {
@@ -24,7 +27,18 @@ public class PostBO {
         return postMapper.selectPostListByUserId(userId);
     }
 
-    public int addPost(int userId, String subject, String content) {
-        return postMapper.insertPost(userId, subject, content);
+    // input: userId, userLoginId, subject, content, file
+    // output: int(성공 행 개수)
+    public int addPost(int userId, String userLoginId, String subject,
+                       String content, MultipartFile file) {
+
+        String imagePath = null;
+
+        // 파일 존재시 업로드
+        if (file != null) {
+            imagePath = fileManager.uploadFile(file, userLoginId);
+        }
+
+        return postMapper.insertPost(userId, subject, content, imagePath);
     }
 }
