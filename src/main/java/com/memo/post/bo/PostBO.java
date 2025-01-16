@@ -27,6 +27,12 @@ public class PostBO {
         return postMapper.selectPostListByUserId(userId);
     }
 
+    // input: postId, userId
+    // output: Post or null
+    public Post getPostByPostIdUserId(int postId, int userId) {
+        return postMapper.selectPostByPostIdUserId(postId, userId);
+    }
+
     // input: userId, userLoginId, subject, content, file
     // output: int(성공 행 개수)
     public int addPost(int userId, String userLoginId, String subject,

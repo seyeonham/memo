@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 
 @Data // getter, setter
 public class Post {
-    public int id;
-    public String userId;
-    public String subject;
-    public String content;
-    public String imagePath;
-    public LocalDateTime createdAt;
-    public LocalDateTime updatedAt;
+    private int id;
+    private String userId;
+    private String subject;
+    private String content;
+    private String imagePath;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
