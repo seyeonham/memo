@@ -22,12 +22,108 @@
             </div>
 
             <div class="d-flex justify-content-between">
-                <button type="button" id="delBtn" class="btn btn-secondary">삭제</button>
+                <button type="button" id="delBtn" th:data-post-id="${post.id}" class="btn btn-secondary">삭제</button>
                 <div>
                     <a href="/post/post-list-view" class="btn btn-dark">목록</a>
-                    <button type="button" id="saveBtn" class="btn btn-warning">수정</button>
+                    <button type="button" id="saveBtn" th:data-post-id="${post.id}" class="btn btn-warning">수정</button>
                 </div>
             </div>
         </div>
     </section>
+    <script>
+        $(function() {
+            // 글쓰기 버튼
+            $("#saveBtn").on("click", function() {
+                // alert("글쓰기");
+                let postId = $(this).data("post-id");
+                // alert(postId);
+
+                let subject = $("#subject").val();
+                let content = $("#content").val();
+                let fileName = $("#file").val();
+
+                console.log(fileName);
+
+                // validation
+                if (!subject) {
+                    alert("제목을 입력하세요.");
+                    return;
+                }
+
+                if (!content) {
+                    alert("내용을 입력하세요.");
+                    return;
+                }
+
+                // 파일명이 있으면(업로드시) 확장자 체크
+                if (fileName) {
+                    // alert("파일이 있다.");
+                    // C:\fakepath\강아지.jpg
+                    let extension = fileName.split(".").pop().toLowerCase();
+                    console.log(extension);
+
+                    if ($.inArray(extension, ["jpg", "png", "gif"]) == -1) {
+                        alert("이미지 파일만 업로드할 수 있습니다.");
+                        $("#file").val(""); // 파일을 비운다.
+                        return;
+                    }
+                }
+
+                // 이미지 업로드시 form태그 반드시 필요 => js에서 폼태그를 만든다.
+                let formData = new FormData();
+                formData.append("postId", postId);
+                formData.append("subject", subject); // key는 form태그의 name과 같음 -> request param명
+                formData.append("content", content); // key는 form태그의 name과 같음 -> request param명
+                formData.append("file", $("#file")[0].files[0]); // 파일
+
+                // ajax
+                $.ajax({
+                    // request
+                    type:"put"
+                    , url:"/post/update"
+                    , data:formData
+                    , processData:false     // 파일 업로드 필수 설정
+                    , contentType:false     // 파일 업로드 필수 설정
+                    , enctype:"multipart/form-data"     // 파일 업로드 필수 설정
+
+                    // response
+                    , success:function(data) {
+                        if (data.code == 200) {
+                            alert("메모가 수정되었습니다.");
+                            location.reload();
+                        } else {
+                            alert("글을 수정하는데 실패했습니다.");
+                        }
+                    }
+                    , error:function(e) {
+                        alert("글을 수정하는데 실패했습니다.");
+                    }
+                });
+            });
+
+            $("#delBtn").on("click", function() {
+                let postId = $(this).data("post-id");
+
+                $.ajax({
+                    // request
+                    type:"delete"
+                    , url:"/post/delete"
+                    , data:{"postId", postId}
+
+                    // response
+                    , success:function(data) {
+                        if (data.code == 200) {
+                            alert("메모 삭제가 완료되었습니다.");
+                            location.href = "/post/post-list-view"
+                        } else {
+                            alert("메모를 삭제하는데 실패했습니다.");
+                        }
+                    }
+                    , error:function(e) {
+                        alert("메모를 삭제하는데 실패했습니다. 관리자에게 문의해주세요.");
+                    }
+                });
+            });
+        });
+    </script>
 </th:block>
