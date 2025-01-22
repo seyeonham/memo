@@ -82,7 +82,7 @@ public class PostRestController {
         String userLoginId = (String)session.getAttribute("userLoginId");
 
         // DB delete
-        postBO.deletePostByPostId();
+        postBO.deletePostById(postId);
 
         // 응답값
         Map<String, Object> result = new HashMap<>();

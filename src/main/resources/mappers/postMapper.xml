@@ -41,6 +41,21 @@
             AND `id` = #{postId}
     </select>
 
+    <select id="selectPostById" parameterType="int">
+        SELECT
+            `id`
+            ,`userId`
+            ,`subject`
+            ,`content`
+            ,`imagePath`
+            ,`createdAt`
+            ,`updatedAt`
+        FROM
+            `post`
+        WHERE
+            `id` = #{postId}
+    </select>
+
     <insert id="insertPost" parameterType="map">
         INSERT INTO `post`
         (
@@ -74,4 +89,9 @@
         WHERE
             `id` = #{postId}
     </update>
+
+    <delete id="deletePostById" parameterType="int">
+        DELETE FROM `post`
+        WHERE `id` = #{postId}
+    </delete>
 </mapper>

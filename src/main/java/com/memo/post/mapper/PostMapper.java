@@ -17,6 +17,8 @@ public interface PostMapper {
             @Param("postId") int postId,
             @Param("userId") int userId);
 
+    public Post selectPostById(int postId);
+
     public int insertPost(@Param("userId") int userId,
                           @Param("subject") String subject,
                           @Param("content") String content,
@@ -27,4 +29,6 @@ public interface PostMapper {
             @Param("subject") String subject,
             @Param("content") String content,
             @Param("imagePath") String imagePath);
+
+    public void deletePostById(int postId);
 }

@@ -81,4 +81,25 @@ public class PostBO {
         // imagePath는 null이거나 있다. 분기는 mapper 쿼리에서 한다.
         postMapper.updatePostById(postId, subject, content, imagePath);
     }
+
+    public void deletePostById(int postId) {
+
+        // 기존 글 가져오기 - 이미지파일 존재시 파일 삭제를 위해
+        Post post = postMapper.selectPostById(postId);
+
+        if (post == null) {
+            log.warn("[### 글 삭제] post is null. postId:{}", postId);
+            return;
+        }
+
+        // imagePath가 있다면 삭제
+        String imagePath = post.getImagePath();
+        if (imagePath != null) {
+            fileManager.deleteFile(imagePath);
+        }
+
+        // DB delete
+        postMapper.deletePostById(postId);
+
+    }
 }
