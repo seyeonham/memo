@@ -20,7 +20,11 @@ public class PostController {
     private final PostBO postBO;
 
     @GetMapping("/post-list-view")
-    public String postListView(Model model, HttpSession session) {
+    public String postListView(
+            @RequestParam(value = "prevId", required = false) Integer prevIdParam,
+            @RequestParam(value = "nextId", required = false) Integer nextIdParam,
+            Model model, HttpSession session) {
+
         // 로그인 된 사람인지 검사
         Integer userId = (Integer)session.getAttribute("userId");
         if (userId == null) {
@@ -29,10 +33,31 @@ public class PostController {
         }
 
         // 데이터 가져오기
-        List<Post> postList = postBO.getPostListByUserId(userId);
+        List<Post> postList = postBO.getPostListByUserId(userId, prevIdParam, nextIdParam);
+        int prevId = 0;
+        int nextId = 0;
+
+        if (postList.isEmpty() == false) { // postList가 비어있지 않을 때 페이징 정보 채움
+            prevId = postList.get(0).getId();
+            nextId = postList.get(postList.size() - 1).getId(); // 마지막칸 postId
+
+            // 이전이 없나? 그렇다면 0
+            // 유저가 쓴 글들 중 제일 큰 숫자가 prevId와 같으면 이전이 없음
+            if (postBO.isPrevLastPageByUserId(userId, prevId)) {
+                prevId = 0;
+            }
+
+            // 다음이 없나? 그렇다면 0
+            // 유저가 쓴 글들 중 제일 작은 숫자가 nextId와 같으면 다음이 없음
+            if (postBO.isNextLastPageByUserId(userId, nextId)) {
+                nextId = 0;
+            }
+        }
 
         // 모델에 담기
-        model.addAttribute("postList", postList);
+        model.addAttribute("prevId", prevId);
+        model.addAttribute("nextId", nextId);
+        model.addAttribute("postList", postList); // [7, 6, 5]
         return "post/postList";
     }
 
