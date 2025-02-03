@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Collections;
 import java.util.List;
 
+// 이슈를 올리기 위한 주석
 @Slf4j
 @RequiredArgsConstructor // DI, 생성자 주입
 @Service
